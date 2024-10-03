@@ -22,28 +22,34 @@ const Home = () => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/email');
-      return;
-    }
-
     const fetchUserDetails = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/email');
+        return;
+      }
+
       try {
-        const URL = `${process.env.REACT_APP_BACKEND_URL}/api/user-details`;
-        const response = await axios.get(URL, {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user-details`, {
           withCredentials: true,
         });
 
-        dispatch(setUser(response.data.data));
-
-        if (response.data.data.logout) {
+        if (response.data.logout) {
           dispatch(logout());
+          localStorage.removeItem('token');
           navigate('/email');
+        } else {
+          dispatch(setUser(response.data.data));
         }
       } catch (error) {
         console.error('Error fetching user details:', error);
-        navigate('/email');
+        if (error.response && error.response.status === 401) {
+          dispatch(logout());
+          localStorage.removeItem('token');
+          navigate('/email');
+        }
+      } finally {
+        setLoading(false);
       }
     };
 
