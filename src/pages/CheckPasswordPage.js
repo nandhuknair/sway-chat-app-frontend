@@ -21,7 +21,7 @@ export default function Component() {
     if (!location?.state?.name) {
       navigate("/email");
     }
-  }, []);
+  }, [location,navigate]);
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
