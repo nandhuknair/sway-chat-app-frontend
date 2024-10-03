@@ -1,17 +1,17 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   logout,
   setOnlineUser,
   setSocketConnection,
   setUser,
-} from "../redux/userSlice";
-import Sidebar from "../components/Sidebar";
-import logo from "../assets/sway-logo.png";
-import io from "socket.io-client";
-import { useTheme } from "../context/ThemeContext";
-import axios from "axios";
+} from '../redux/userSlice';
+import Sidebar from '../components/Sidebar';
+import logo from '../assets/sway-logo.png';
+import io from 'socket.io-client';
+import { useTheme } from '../context/ThemeContext';
+import axios from 'axios';
 
 const Home = () => {
   const user = useSelector((state) => state.user);
@@ -19,11 +19,12 @@ const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { darkMode } = useTheme();
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (!token) {
-      navigate("/email");
+      navigate('/email');
       return;
     }
 
@@ -38,11 +39,11 @@ const Home = () => {
 
         if (response.data.data.logout) {
           dispatch(logout());
-          navigate("/email");
+          navigate('/email');
         }
       } catch (error) {
-        console.error("Error fetching user details:", error);
-        navigate("/email");
+        console.error('Error fetching user details:', error);
+        navigate('/email');
       }
     };
 
@@ -50,57 +51,61 @@ const Home = () => {
   }, [dispatch, navigate]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (!token) return;
 
-    const socketConnection = io(process.env.REACT_APP_BACKEND_URL, {
+    const newSocket = io(process.env.REACT_APP_BACKEND_URL, {
+      transports: ['websocket'],
+      secure: true,
+      rejectUnauthorized: false,
       auth: { token },
     });
 
-    socketConnection.on("connect", () => {
-      console.log("Connected to socket server");
+    newSocket.on('connect', () => {
+      console.log('Connected to socket server');
     });
 
-    socketConnection.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
+    newSocket.on('connect_error', (error) => {
+      console.error('Socket connection error:', error);
     });
 
-    socketConnection.on("onlineUser", (data) => {
+    newSocket.on('onlineUser', (data) => {
       dispatch(setOnlineUser(data));
     });
 
-    dispatch(setSocketConnection(socketConnection));
+    setSocket(newSocket);
+    dispatch(setSocketConnection(newSocket));
 
     return () => {
-      socketConnection.disconnect();
+      newSocket.disconnect();
     };
   }, [dispatch]);
 
-  const basePath = location.pathname === "/";
+  const basePath = location.pathname === '/';
 
   return (
     <div
       className={`grid lg:grid-cols-[300px,1fr] h-screen max-h-screen ${
-        darkMode ? "dark" : ""
+        darkMode ? 'dark' : ''
       }`}
     >
       <section
         className={`bg-white dark:bg-gray-800 ${
-          !basePath && "hidden"
+          !basePath && 'hidden'
         } lg:block`}
       >
         <Sidebar />
       </section>
 
       <section
-        className={`${basePath && "hidden"} bg-gray-300 dark:bg-gray-700`}
+        className={`${basePath && 'hidden'} bg-gray-300 dark:bg-gray-700`}
       >
         <Outlet />
       </section>
 
       <div
         className={`justify-center bg-gray-300 dark:bg-gray-700 items-center flex-col gap-2 hidden ${
-          !basePath ? "hidden" : "lg:flex"
+          !basePath ? 'hidden' : 'lg:flex'
         }`}
       >
         <div>
