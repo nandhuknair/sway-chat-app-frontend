@@ -3,7 +3,7 @@
 
 Add some screenshots here to showcase the application interface and functionality.
 
-![Chat Interface](link-to-screenshot)  
+![Chat Interface](https://github.com/nandhuknair/sway-chat-app-frontend/issues/1#issue-2565979349)  
 ![Typing Indicator](link-to-screenshot)
 
 ## Future Improvements
