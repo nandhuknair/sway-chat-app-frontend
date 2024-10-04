@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { IoSearchOutline } from "react-icons/io5";
 import Loading from './Loading';
 import UserSearchCard from './UserSearchCard';
@@ -8,28 +8,29 @@ import { IoClose } from "react-icons/io5";
 import { useTheme } from '../context/ThemeContext'
 
 const SearchUser = ({onClose}) => {
-    const [searchUser, setSearchUser] = useState([])
-    const [loading, setLoading] = useState(false)
-    const [search, setSearch] = useState("")
-    const { darkMode } = useTheme()
+    const [searchUser, setSearchUser] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [search, setSearch] = useState("");
+    const { darkMode } = useTheme();
 
-    const handleSearchUser = async() => {
-        const URL = `${process.env.REACT_APP_BACKEND_URL}/api/search-user`
+    const handleSearchUser = async () => {
+        const URL = `${process.env.REACT_APP_BACKEND_URL}/api/search-user`;
         try {
-            setLoading(true)
+            setLoading(true);
             const response = await axios.post(URL, {
                 search: search
-            })
-            setLoading(false)
-            setSearchUser(response.data.data)
+            });
+            setLoading(false);
+            setSearchUser(response.data.data);
         } catch (error) {
-            toast.error(error?.response?.data?.message)
+            setLoading(false);
+            toast.error(error?.response?.data?.message);
         }
-    }
+    };
 
     useEffect(() => {
-        handleSearchUser()
-    }, [search])
+        handleSearchUser();
+    }, [search]);
 
     return (
         <div className='fixed inset-0 bg-slate-700 bg-opacity-40 dark:bg-opacity-60 p-2 z-10'>
@@ -47,9 +48,10 @@ const SearchUser = ({onClose}) => {
                     </div>
                 </div>
 
-                <div className='bg-white dark:bg-gray-800 mt-2 w-full p-4 rounded'>
+                {/* Scrollable user list container */}
+                <div className='bg-white dark:bg-gray-800 mt-2 w-full p-4 rounded max-h-96 overflow-y-auto'>
                     {searchUser.length === 0 && !loading && (
-                        <p className='text-center text-slate-500 dark:text-slate-400'>no user found!</p>
+                        <p className='text-center text-slate-500 dark:text-slate-400'>No user found!</p>
                     )}
 
                     {loading && (
@@ -70,7 +72,7 @@ const SearchUser = ({onClose}) => {
                 </button>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default SearchUser
+export default SearchUser;
