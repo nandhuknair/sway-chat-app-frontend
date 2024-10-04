@@ -52,7 +52,7 @@ const EditUserDetails = ({onClose, user}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+    
         try {
             const URL = `${process.env.REACT_APP_BACKEND_URL}/api/update-user`;
             const response = await axios({
@@ -60,17 +60,19 @@ const EditUserDetails = ({onClose, user}) => {
                 url: URL,
                 data: {
                     name: data.name,
-                    profile_pic: data.profile_pic
-                },  
-                withCredentials: true
+                    profile_pic: data.profile_pic,
+                },
+                withCredentials: true,
             });
-            
-            toast.success(response?.data?.message);
-            
-            if (response.data.success) {
-                dispatch(setUser(response.data.data));
+    
+            if (response.data.success && response.data.data) {
+                dispatch(setUser(response.data.data));  
                 onClose();
+            } else {
+                throw new Error("Failed to update user details");
             }
+    
+            toast.success(response?.data?.message);
         } catch (error) {
             console.log(error);
             toast.error(error.message || "An error occurred");
@@ -121,7 +123,7 @@ const EditUserDetails = ({onClose, user}) => {
                     <Divider/>    
                     <div className='flex gap-2 w-fit ml-auto'>
                         <button onClick={onClose} className='border-primary border text-primary px-4 py-1 rounded hover:bg-primary hover:text-white dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500 dark:hover:text-white'>Cancel</button>
-                        <button onClick={handleSubmit} className='border-primary bg-primary text-white border px-4 py-1 rounded hover:bg-secondary dark:bg-blue-600 dark:border-blue-600 dark:hover:bg-blue-700'>Save</button>
+                        <button onClick={handleSubmit} className='border-primary bg-primary text-black border px-4 py-1 rounded hover:bg-secondary dark:bg-blue-600 dark:border-blue-600 dark:hover:bg-blue-700'>Save</button>
                     </div>
                 </form>
             </div>
