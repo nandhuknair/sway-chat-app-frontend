@@ -3,7 +3,7 @@
 
 Add some screenshots here to showcase the application interface and functionality.
 
-![Chat Interface](https://drive.google.com/file/d/14mGyBnadD91HIgOTphlhKG2zh6VncOC4/view?usp=drive_link)  
+![Chat Interface](https://drive.google.com/uc?export=view&id=14mGyBnadD91HIgOTphlhKG2zh6VncOC4)  
 ![Typing Indicator](link-to-screenshot)
 
 ## Future Improvements
