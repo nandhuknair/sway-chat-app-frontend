@@ -110,9 +110,9 @@ const MessagePage = () => {
   return (
     <div 
       style={{ backgroundImage: `url(${backgroundImage})` }}
-      className="bg-no-repeat bg-cover bg-center min-h-screen flex flex-col"
+      className="bg-no-repeat bg-cover bg-center h-screen flex flex-col"
     >
-      <header className="sticky top-0 z-10 bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90 shadow-md backdrop-blur-sm">
+      <header className="bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90 shadow-md backdrop-blur-sm">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Link to="/" className="lg:hidden text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">

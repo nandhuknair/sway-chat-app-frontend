@@ -32,6 +32,9 @@ const Home = () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user-details`, {
           withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          }
         });
 
         if (response.data.logout) {
