@@ -21,7 +21,7 @@ export default function Component() {
     if (!location?.state?.name) {
       navigate("/email");
     }
-  }, [location,navigate]);
+  }, [location, navigate]);
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -59,10 +59,16 @@ export default function Component() {
       if (response.data.success) {
         dispatch(setToken(response?.data?.token));
         localStorage.setItem("token", response?.data?.token);
+        console.log(
+          "This is the response from check password page of token",
+          response?.data?.token
+        );
         setData({
           password: "",
         });
-        navigate("/");
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);

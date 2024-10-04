@@ -9,6 +9,8 @@ import { Provider } from "react-redux";
 import { store } from "./redux/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
+console.log(process.env.REACT_APP_BACKEND_URL)
 root.render(
   <React.StrictMode>
     <Provider store={store}>
