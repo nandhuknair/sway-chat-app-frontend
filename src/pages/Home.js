@@ -49,7 +49,7 @@ const Home = () => {
           navigate('/email');
         }
       } finally {
-        setLoading(false);
+        console.log('completed')
       }
     };
 
