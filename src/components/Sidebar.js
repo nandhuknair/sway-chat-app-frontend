@@ -24,23 +24,25 @@ const Sidebar = () => {
     const { darkMode, toggleDarkMode } = useTheme()
 
     useEffect(() => {
-        if (socketConnection) {
-            socketConnection.emit('sidebar', user._id)
+        if (socketConnection && user?._id) {
+            socketConnection.emit('sidebar', user._id);
             
             socketConnection.on('conversation', (data) => {
                 const conversationUserData = data.map((conversationUser) => {
-                    if (conversationUser?.sender?._id === conversationUser?.receiver?._id) {
-                        return { ...conversationUser, userDetails: conversationUser?.sender }
-                    } else if (conversationUser?.receiver?._id !== user?._id) {
-                        return { ...conversationUser, userDetails: conversationUser.receiver }
-                    } else {
-                        return { ...conversationUser, userDetails: conversationUser.sender }
+                    // Check if sender and receiver IDs exist before accessing them
+                    if (conversationUser?.sender && conversationUser?.receiver) {
+                        return conversationUser.sender._id === conversationUser.receiver._id 
+                            ? { ...conversationUser, userDetails: conversationUser.sender }
+                            : { ...conversationUser, userDetails: conversationUser.receiver._id !== user._id ? conversationUser.receiver : conversationUser.sender }
                     }
-                })
-                setAllUser(conversationUserData)
-            })
+                    return null; // Handle cases where sender or receiver is null
+                }).filter(Boolean); // Filter out any null entries
+                
+                setAllUser(conversationUserData);
+            });
         }
-    }, [socketConnection, user])
+    }, [socketConnection, user]);
+    
 
     const handleLogout = () => {
         dispatch(logout())

@@ -1,24 +1,29 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { logout, setUser } from "../redux/userSlice";
+import {
+  logout,
+  setOnlineUser,
+  setSocketConnection,
+  setUser,
+} from "../redux/userSlice";
 import Sidebar from "../components/Sidebar";
 import logo from "../assets/sway-logo.png";
+import io from "socket.io-client";
 import { useTheme } from "../context/ThemeContext";
 import axios from "axios";
 import Cookies from "js-cookie";
-
 const Home = () => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { darkMode } = useTheme();
+  const [socket, setSocket] = useState(null);
 
-  // Fetch user details
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const token = localStorage.getItem('token'); 
+      const token = localStorage.getItem("token");
       console.log("this is the cookie token !!!!!!!!!!!!!!!!", token);
       if (!token) {
         navigate("/email");
@@ -30,6 +35,7 @@ const Home = () => {
           `${process.env.REACT_APP_BACKEND_URL}/api/user-details`,
           {
             withCredentials: true,
+            data: { token: token },
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
@@ -39,7 +45,7 @@ const Home = () => {
 
         if (response.data.logout) {
           dispatch(logout());
-          console.log("Token expired, logging out...");
+          console.log("token didnt get to the backend");
           navigate("/email");
         } else {
           dispatch(setUser(response.data.data));
@@ -48,6 +54,7 @@ const Home = () => {
         console.error("Error fetching user details:", error);
         if (error.response && error.response.status === 401) {
           dispatch(logout());
+          // localStorage.removeItem("token");
           navigate("/email");
         }
       }
@@ -55,6 +62,38 @@ const Home = () => {
 
     fetchUserDetails();
   }, [dispatch, navigate]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log("this is the soket token !!!!!!!!!!!!!!!!", token);
+    if (!token) return;
+
+    const newSocket = io(process.env.REACT_APP_BACKEND_URL, {
+      transports: ["websocket"],
+      secure: true,
+      rejectUnauthorized: false,
+      auth: { token },
+    });
+
+    newSocket.on("connect", () => {
+      console.log("Connected to socket server");
+    });
+
+    newSocket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    newSocket.on("onlineUser", (data) => {
+      dispatch(setOnlineUser(data));
+    });
+
+    setSocket(newSocket);
+    dispatch(setSocketConnection(newSocket));
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [dispatch]);
 
   const basePath = location.pathname === "/";
 
