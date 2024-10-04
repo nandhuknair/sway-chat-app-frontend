@@ -34,6 +34,7 @@ const Home = () => {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
           }
         });
 
@@ -51,8 +52,6 @@ const Home = () => {
           localStorage.removeItem('token');
           navigate('/email');
         }
-      } finally {
-        console.log('completed')
       }
     };
 
